@@ -1,0 +1,13 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/nick/linux/PRO/M300/ffm_app'
+mips-linux-gnu-gcc -c  -I project  -I ffmpeg  -I mylib  -I v4l2dec -I /home/nick/M300/usr/include      -o obj/main.o project/main.c
+mips-linux-gnu-gcc -c  -I project  -I ffmpeg  -I mylib  -I v4l2dec -I /home/nick/M300/usr/include      -o obj/wifi_ctrl.o mylib/wifi_ctrl.c
+mips-linux-gnu-gcc -c  -I project  -I ffmpeg  -I mylib  -I v4l2dec -I /home/nick/M300/usr/include      -o obj/color_convert.o v4l2dec/color_convert.c
+mips-linux-gnu-gcc -c  -I project  -I ffmpeg  -I mylib  -I v4l2dec -I /home/nick/M300/usr/include      -o obj/v4l2.o v4l2dec/v4l2.c
+mips-linux-gnu-gcc -c  -I project  -I ffmpeg  -I mylib  -I v4l2dec -I /home/nick/M300/usr/include      -o obj/v4l2h264dec.o v4l2dec/v4l2h264dec.c
+mips-linux-gnu-gcc -c  -I project  -I ffmpeg  -I mylib  -I v4l2dec -I /home/nick/M300/usr/include      -o obj/ffmpegprocess.o ffmpeg/ffmpegprocess.cpp -lstdc++
+mips-linux-gnu-gcc -c  -I project  -I ffmpeg  -I mylib  -I v4l2dec -I /home/nick/M300/usr/include      -o obj/mythread.o mylib/mythread.cpp -lstdc++
+mips-linux-gnu-gcc -c  -I project  -I ffmpeg  -I mylib  -I v4l2dec -I /home/nick/M300/usr/include      -o obj/cyclebuffer.o mylib/cyclebuffer.cpp -lstdc++
+mips-linux-gnu-gcc -Wall -o ffm_app obj/main.o obj/wifi_ctrl.o obj/color_convert.o obj/v4l2.o obj/v4l2h264dec.o obj/ffmpegprocess.o obj/mythread.o obj/cyclebuffer.o   -L/home/nick/M300/usr/lib -lpthread -lz -lssl -lcrypto -ldrm -lavcodec -lavformat  -lavutil -lswscale -lswresample -lstdc++
+make: Leaving directory '/home/nick/linux/PRO/M300/ffm_app'
+ 

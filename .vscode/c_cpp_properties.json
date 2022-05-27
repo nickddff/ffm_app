@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "mips",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/nick/M300/usr/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "/home/nick/M300/ingenic-linux-kernel4.4.94-M300-v5.0-20220217/prebuilts/toolchains/mips-gcc720-glibc229/bin/mips-linux-gnu-g++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}

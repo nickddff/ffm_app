@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "mythread.h": "c",
+        "cyclebuffer.h": "c",
+        "stdio.h": "c",
+        "unistd.h": "c",
+        "wpa_ctrl.h": "c",
+        "signal.h": "c"
+    }
+}
