@@ -1,4 +1,6 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+make: *** No rule to make target 'all'.  Stop.
+
 # GNU Make 4.1
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2014 Free Software Foundation, Inc.
@@ -6,7 +8,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri May 27 10:04:07 2022
+# Make data base, printed on Fri May 27 14:46:14 2022
 
 # Variables
 
@@ -27,7 +29,7 @@ VSCODE_LOG_NATIVE = false
 # environment
 UPSTART_INSTANCE = 
 # makefile (from 'makefile', line 17)
-TARGET = ffm_app
+TARGET = ffm_app_2
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # automatic
@@ -139,7 +141,7 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 4208
+GIO_LAUNCHED_DESKTOP_FILE_PID = 111914
 # automatic
 %F = $(notdir $%)
 # environment
@@ -167,9 +169,6 @@ GTK_MODULES = gail:atk-bridge:unity-gtk-module
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
- 
-make: *** No rule to make target 'all'.  Stop.
-
 HOME = /home/nick
 # environment
 LESSCLOSE = /usr/bin/lesspipe %s %s
@@ -182,7 +181,7 @@ LOGNAME = nick
 # environment
 QT_LINUX_ACCESSIBILITY_ALWAYS_ON = 1
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
 SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void
 # environment
@@ -222,7 +221,7 @@ CPPFILE := ffmpegprocess.cpp mythread.cpp cyclebuffer.cpp
 # environment
 IM_CONFIG_PHASE = 1
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-185729eb-702d-4b0b-b81e-c5935554aa5f.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-d1222566-7f2d-46b1-b097-1a57fcf399c3.sock
 # environment
 COMPIZ_CONFIG_PROFILE = ubuntu
 # environment
@@ -232,7 +231,7 @@ USER = nick
 # environment
 SNAP_REVISION = 97
 # makefile
-.DEFAULT_GOAL := ffm_app
+.DEFAULT_GOAL := ffm_app_2
 # makefile (from 'makefile', line 21)
 INCLUDE :=  -I project  -I ffmpeg  -I mylib  -I v4l2dec -I /home/nick/M300/usr/include     
 # environment
@@ -279,6 +278,7 @@ MFLAGS = -pqrR
 GDK_BACKEND = x11
 # automatic
 +F = $(notdir $+)
+ 
 # environment
 GTK2_MODULES = overlay-scrollbar
 # makefile (from 'makefile', line 24)
@@ -326,7 +326,7 @@ MIPSOBJDUMP := mips-linux-gnu-objdump
 # environment
 LANG = C
 # environment
-VSCODE_PID = 4258
+VSCODE_PID = 111963
 # variable set hash-table stats:
 # Load=157/1024=15%, Rehash=0, Collisions=30/198=15%
 
@@ -337,12 +337,13 @@ VSCODE_PID = 4258
 # Directories
 
 # mylib (device 2050, inode 416050): 7 files, no impossibilities.
-# . (device 2050, inode 406700): 11 files, no impossibilities.
+# . (device 2050, inode 406700): 15 files, no impossibilities.
 # v4l2dec (device 2050, inode 416051): 6 files, no impossibilities.
 # project (device 2050, inode 416061): 3 files, no impossibilities.
 # ffmpeg (device 2050, inode 416049): 4 files, no impossibilities.
 
-# 31 files, no impossibilities in 5 directories.
+# 35 files, no impossibilities in 5 directories.
+ 
 
 # Implicit Rules
 
@@ -373,6 +374,13 @@ main.c:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+
+ffm_app_2: obj/main.o obj/wifi_ctrl.o obj/color_convert.o obj/v4l2.o obj/v4l2h264dec.o obj/ffmpegprocess.o obj/mythread.o obj/cyclebuffer.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'makefile', line 44):
+	$(MIPSGCC) -Wall -o $(TARGET) $^   -L/home/nick/M300/usr/lib -lpthread -lz -lssl -lcrypto -ldrm -lavcodec -lavformat  -lavutil -lswscale -lswresample -lstdc++
 
 obj/wifi_ctrl.o: wifi_ctrl.c
 #  Implicit rule search has not been done.
@@ -407,7 +415,7 @@ v4l2h264dec.c:
 # Not a target:
 makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-05-25 15:38:25.042694382
+#  Last modified 2022-05-27 14:45:09.870401296
 #  File has been updated.
 #  Successfully updated.
 
@@ -459,7 +467,6 @@ clean:
 #  File does not exist.
 #  File has not been updated.
 #  recipe to execute (from 'makefile', line 51):
- 
 	rm -rf  $(TARGET) $(OBJS)
 
 # Not a target:
@@ -496,15 +503,8 @@ obj/color_convert.o: color_convert.c
 #  recipe to execute (from 'makefile', line 46):
 	$(MIPSGCC) -c $(INCLUDE) -o $@ $<
 
-ffm_app: obj/main.o obj/wifi_ctrl.o obj/color_convert.o obj/v4l2.o obj/v4l2h264dec.o obj/ffmpegprocess.o obj/mythread.o obj/cyclebuffer.o
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'makefile', line 44):
-	$(MIPSGCC) -Wall -o $(TARGET) $^   -L/home/nick/M300/usr/lib -lpthread -lz -lssl -lcrypto -ldrm -lavcodec -lavformat  -lavutil -lswscale -lswresample -lstdc++
-
 # files hash-table stats:
-# Load=23/1024=2%, Rehash=0, Collisions=4/64=6%
+# Load=23/1024=2%, Rehash=0, Collisions=5/64=8%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
@@ -512,12 +512,12 @@ ffm_app: obj/main.o obj/wifi_ctrl.o obj/color_convert.o obj/v4l2.o obj/v4l2h264d
 # General ('VPATH' variable) search path:
 # project:ffmpeg:mylib:v4l2dec
 
-# strcache buffers: 1 (0) / strings = 51 / storage = 546 B / avg = 10 B
-# current buf: size = 8162 B / used = 546 B / count = 51 / avg = 10 B
+# strcache buffers: 1 (0) / strings = 54 / storage = 572 B / avg = 10 B
+# current buf: size = 8162 B / used = 572 B / count = 54 / avg = 10 B
 
-# strcache performance: lookups = 100 / hit rate = 49%
+# strcache performance: lookups = 104 / hit rate = 48%
 # hash-table stats:
-# Load=51/8192=1%, Rehash=0, Collisions=5/100=5%
-# Finished Make data base on Fri May 27 10:04:07 2022
+# Load=54/8192=1%, Rehash=0, Collisions=5/104=5%
+# Finished Make data base on Fri May 27 14:46:14 2022
 
  

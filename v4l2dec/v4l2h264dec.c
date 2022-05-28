@@ -44,7 +44,7 @@
 #define FORMAT_SELECT "nv12"
 #define SAVE_DECODED_FRAME 0
 #define PREVIEW_DECODED_FRAME 1
-#define SHOW_RATE 0
+#define SHOW_RATE 1
 #define OUTPUT_FORMAT_DEBUG 0 
 
 //#define PIC_WIDTH	1280           //in stream pix
@@ -465,7 +465,7 @@ uint64_t ts;
 bool test;
 
 struct fb_var_screeninfo varinfo;
-struct timeval tv1, tv2, delt_tv;
+struct timeval tv1, tv2, delt_tv,tv_start,tv_end;
 struct timeval sum_tv = {0};
 int timeval_count = 0;
 float fps = 0;
@@ -566,10 +566,12 @@ int V4l2dec_videoplay_init(int width_t,int height_t)
 error:
     rc = 1;
 	printf("v4l2 init into err\r\n");
+	exit(EXIT_FAILURE);
     return rc;
 
 complete:
 	printf("v4l2 init success\n");
+	gettimeofday(&tv_start,NULL);
 	return 0;
 }
 
@@ -636,12 +638,12 @@ int v4l2dec_handling_perfame(unsigned char *packet,int packet_len)
                     delt_tv = get_timeval_diff(tv1, tv2);
                     sum_tv = accumulate_timeval_diff(sum_tv, delt_tv);
                     timeval_count ++;
-                 } else {
+                } else {
                     rc = video_engine_decode(video_fd, v4l2_index,
                             CODEC_TYPE_H264, ts, slice_data,
                             slice_size, video_buffers,
                             &video_setup);
-                 }
+                }
                 if (rc < 0) {
                     fprintf(stderr, "Unable to decode video frame\n");
                     return rc;
@@ -783,7 +785,11 @@ int v4l2dec_handling_perfame(unsigned char *packet,int packet_len)
 int v4l2dec_stop(void)
 {
     int rc = 0;
+	struct timeval del;
     rc = video_engine_stop(video_fd, video_buffers, config.buffers_count,&video_setup);
+	gettimeofday(&tv_end,NULL);
+	del = get_timeval_diff(tv_start,tv_end);
+	printf("total_tv : %d sec, %d usec\n", del.tv_sec, del.tv_usec);
 	if(show_frame_rate){
 		fps = get_frame_rate(sum_tv, timeval_count);
 		printf("sum_tv : %d sec, %d usec\n", sum_tv.tv_sec, sum_tv.tv_usec);
@@ -792,24 +798,12 @@ int v4l2dec_stop(void)
 	}
 	if (rc < 0) {
 		fprintf(stderr, "Unable to stop video engine\n");
-		goto error;
 	}
-
-	rc = 0;
-	goto complete;
-
-error:
-	rc = 1;
-
-complete:
-	if (video_fd >= 0)
-		close(video_fd);
-
+	if (video_fd >= 0)close(video_fd);
 	munmap(fb_mapaddr, fb_w*fb_h*4);
-	if(fb_fd > 0)
-		close(fb_fd);
-
+	if(fb_fd > 0)close(fb_fd);
 	cleanup_config(&config);
+	exit(EXIT_FAILURE);
 	return rc;
 
 }

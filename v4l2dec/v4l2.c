@@ -909,11 +909,9 @@ int video_engine_decode(int video_fd, unsigned int index,
     if(0 == rc)
     {
         fprintf(stderr,"select Timeout\n");
-        exit(EXIT_FAILURE);
-        //return -1;
+        //exit(EXIT_FAILURE);
+        return -1;
     }
-
-
 	rc = dequeue_buffer(video_fd, setup->output_type, &out_index, 1,
 			    &source_error);
 	if(rc < 0) {

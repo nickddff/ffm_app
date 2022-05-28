@@ -14,7 +14,7 @@ SRCDIRS                 := 	project \
                             mylib \
                             v4l2dec \
 
-TARGET		  	?= ffm_app
+TARGET		  	?= ffm_app_2
 CFLAG		    ?=  
 
 #//-I ffmpeg \ -I mylib \ -I v4l2dec

@@ -1,4 +1,5 @@
 #include "mythread.h"
+#include "config.h"
 
 TID_PARA tid_para = {0};
 int getParaFlag = 0;
@@ -10,15 +11,19 @@ int tid1_ffm_init(char *ip,char *filename);
 
 int tid1_ffm_init(char *ip,char *filename)
 {
+    #if RTSP_BY_WLAN
     char str_tmp[100] = {0};
     strcat(str_tmp,"rtsp://");
     strcat(str_tmp,ip);
-    strcat(str_tmp,":8554/");
+    strcat(str_tmp,"/");
     strcat(str_tmp,filename);
     strcat(str_tmp,"\0");
-    //printf("confirm ip:%s\n",str_tmp);
-    ffmpeg->FFmpeg_RTSPVideoInit("rtsp://192.168.137.1/video.264",tid_para.width_t,tid_para.height_t);
-    //ffmpeg->FFmpeg_RTSPVideoInit(str_tmp,tid_para.width_t,tid_para.height_t);
+    printf("confirm ip:%s\n",str_tmp);
+    ffmpeg->FFmpeg_RTSPVideoInit(str_tmp,tid_para.width_t,tid_para.height_t);
+    #elif RTSP_BY_LAN
+    ffmpeg->FFmpeg_RTSPVideoInit("rtsp://192.168.1.3:8554/video.264",tid_para.width_t,tid_para.height_t);
+    #endif
+    //ffmpeg->FFmpeg_RTSPVideoInit("rtsp://192.168.137.1/video.264",tid_para.width_t,tid_para.height_t);
     //ffmpeg->FFmpeg_RTSPVideoInit("rtsp://192.168.1.178/live",tid_para.width_t,tid_para.height_t);
     if((tid_para.width_t != 0)&&(tid_para.height_t != 0))
     {
@@ -49,10 +54,9 @@ void tid2_ffm_working(void)
         //printf("step3\r\n");
         while(0 == fifo->push(&(fifo->mbufferPara),ffmpeg->mVideoSrcPkt.data,ffmpeg->mVideoSrcPkt.size))
         {
-             printf("......FIFO FULL AND SLEEP~~~~~~~\r\n");
+             //printf("......FIFO FULL AND SLEEP~~~~~~~\r\n");
         }
         ffmpeg->FFmpeg_RTSPpacketUnref();
-
     }
 }
 
@@ -67,7 +71,7 @@ void tid3_cim_working(void)
     {
         while((tmp = fifo->pop(&(fifo->mbufferPara),data_size)) == NULL)
         {
-            printf("fifo is empty..\r\n");
+            //printf("fifo is empty..\r\n");
         }
         //printf("datasize %ld...\r\n",data_size);
         ret = v4l2dec_handling_perfame(tmp,data_size);

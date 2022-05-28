@@ -15,7 +15,7 @@
 #include <string.h>
 #include <signal.h>
 #include <termios.h>
-
+#include "config.h"
 
 int utty_init(char *device,int baudrate);
 static struct termios old_cfg;  //用于保存终端的配置参数
@@ -31,10 +31,12 @@ extern void tid3_cim_working(void);
 static void *new_thread1_start(void *arg)
 {
     char *ip_str;
+    #if RTSP_BY_WLAN
     if(wifi_init(&ip_str) == -1)
     {
         pthread_exit((void *)1);
     }
+    #endif
     tid1_ffm_init(ip_str,"video.264");
     pthread_exit((void *)0);
 }

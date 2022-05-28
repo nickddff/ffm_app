@@ -113,14 +113,12 @@ void FFmpegProcess::FFmpeg_RTSPPacketInit(void)
 int FFmpegProcess::FFmpeg_RTSPVideoSaveFrame(void)
 {
     int ret = 0;
-    //printf("step1\r\n");
     ret = av_read_frame(mpVideoSrcFormatCxt, &mVideoSrcPkt);
     if (ret < 0)
     {
         fprintf(stderr, "av_read_frame error! \n");
         return ret;
     }
-    //printf("step2\r\n");
     return ret ;
 }
 
