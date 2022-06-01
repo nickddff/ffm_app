@@ -25,18 +25,20 @@ static int fd;      //串口终端对应的文件描述符
 
 extern int wifi_init(char **ip_str);
 extern int tid1_ffm_init(char *ip,char *filename);
-extern void tid2_ffm_working(void);
+extern void tid2_ffm_working(int flag);
 extern void tid3_cim_working(void);
 
 static void *new_thread1_start(void *arg)
 {
     char *ip_str;
+
     #if RTSP_BY_WLAN
     if(wifi_init(&ip_str) == -1)
     {
         pthread_exit((void *)1);
     }
     #endif
+    
     tid1_ffm_init(ip_str,"video.264");
     pthread_exit((void *)0);
 }
@@ -44,12 +46,13 @@ static void *new_thread1_start(void *arg)
 static void *new_thread2_start(void *arg)
 {
     int ret;
+    int init_flag = *((int *)arg);
     ret = pthread_detach(pthread_self());
     if(ret){
         fprintf(stderr, "pthread_detach error: %s\n", strerror(ret));
         return NULL;
     }
-    tid2_ffm_working();
+    tid2_ffm_working(init_flag);
     pthread_exit((void *)0);
 }
 
@@ -95,7 +98,8 @@ int main(int argc, char *argv[])
     // {
     //     fprintf(stderr,"ttyusart error :%s\n",strerror(ret));
     // }
-    ret = pthread_create(&tid2_ffm,NULL,new_thread2_start,NULL);
+    int init_flag = 1;
+    ret = pthread_create(&tid2_ffm,NULL,new_thread2_start,(void *)&init_flag);
     if(ret){
         fprintf(stderr, "pthread2_create error: %s\n", strerror(ret));
         exit(-1);

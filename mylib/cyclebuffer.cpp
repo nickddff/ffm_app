@@ -19,13 +19,14 @@ CycleBuffer::~CycleBuffer(void)
     }
 }
 
-bool CycleBuffer::push(bufferPara *Q,uint8_t* src,int srcLen)
+bool CycleBuffer::push(bufferPara *Q,uint8_t* src,int srcLen,uint64_t utime)
 {
     pthread_mutex_lock(&mutex);
     if ((Q->iWrite+1)%MAXSIZE!=Q->iRead)
     {
         memcpy(Q->mdata[Q->iWrite].cdata,src,srcLen);
         //Q->mdata[Q->iWrite].cdata = src;
+        Q->mdata[Q->iWrite].time = utime;
         Q->mdata[Q->iWrite].iSize = srcLen;
         Q->iWrite = (Q->iWrite+1)%MAXSIZE;
     //     if(Q->iWrite > Q->iRead)
@@ -44,13 +45,14 @@ bool CycleBuffer::push(bufferPara *Q,uint8_t* src,int srcLen)
 
 }
 
-uint8_t* CycleBuffer::pop(bufferPara *Q,long &dstLen)
+uint8_t* CycleBuffer::pop(bufferPara *Q,long &dstLen,uint64_t &utime)
 {
     pthread_mutex_lock(&mutex);
     if (Q->iRead!=Q->iWrite)
     {
         //dest = Q->mdata[Q->iRead].cdata;
         dstLen = Q->mdata[Q->iRead].iSize;
+        utime = Q->mdata[Q->iRead].time;
         //printf("iread:%d,isize:%ld",Q->iRead,dstLen);
         memcpy(dest,Q->mdata[Q->iRead].cdata,dstLen);
         Q->iRead = (Q->iRead+1)%MAXSIZE;

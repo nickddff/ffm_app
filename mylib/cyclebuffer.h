@@ -14,6 +14,7 @@ typedef struct
 {
     int iSize;//数据的大小
     uint8_t *cdata;
+    uint64_t time;
 }bufData;
 typedef struct
 {
@@ -27,9 +28,9 @@ class CycleBuffer
 public:
     CycleBuffer(void);
     ~CycleBuffer(void);
-    bool push(bufferPara *Q,uint8_t* src,int strLen);//缓冲区存入
+    bool push(bufferPara *Q,uint8_t* src,int strLen,uint64_t time);//缓冲区存入
 
-    uint8_t* pop(bufferPara *Q,long &dsLen);//弹出数据
+    uint8_t* pop(bufferPara *Q,long &dsLen,uint64_t &utime);//弹出数据
 
     bool InitQueue(bufferPara *Q);//初始化队列
     bufferPara  mbufferPara;

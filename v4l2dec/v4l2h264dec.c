@@ -465,7 +465,7 @@ uint64_t ts;
 bool test;
 
 struct fb_var_screeninfo varinfo;
-struct timeval tv1, tv2, delt_tv,tv_start,tv_end;
+struct timeval tv1, tv2, delt_tv,tv_start,tv_end,tsv0,tsv1;
 struct timeval sum_tv = {0};
 int timeval_count = 0;
 float fps = 0;
@@ -572,11 +572,12 @@ error:
 complete:
 	printf("v4l2 init success\n");
 	gettimeofday(&tv_start,NULL);
+	gettimeofday(&tsv0,NULL);
 	return 0;
 }
 
 
-int v4l2dec_handling_perfame(unsigned char *packet,int packet_len)
+int v4l2dec_handling_perfame(unsigned char *packet,int packet_len,uint64_t timer)
 {
 
         int ret = 0,rc = 0;
@@ -630,10 +631,11 @@ int v4l2dec_handling_perfame(unsigned char *packet,int packet_len)
                 /*decode nal units */
                 if(show_frame_rate){
                     gettimeofday(&tv1, NULL);
+					//printf("fd is %d\n",video_fd);
                     rc = video_engine_decode(video_fd, v4l2_index,
                             CODEC_TYPE_H264, ts, slice_data,
                             slice_size, video_buffers,
-                            &video_setup);
+                            &video_setup,timer);
                     gettimeofday(&tv2, NULL);
                     delt_tv = get_timeval_diff(tv1, tv2);
                     sum_tv = accumulate_timeval_diff(sum_tv, delt_tv);
@@ -642,7 +644,7 @@ int v4l2dec_handling_perfame(unsigned char *packet,int packet_len)
                     rc = video_engine_decode(video_fd, v4l2_index,
                             CODEC_TYPE_H264, ts, slice_data,
                             slice_size, video_buffers,
-                            &video_setup);
+                            &video_setup,timer);
                 }
                 if (rc < 0) {
                     fprintf(stderr, "Unable to decode video frame\n");

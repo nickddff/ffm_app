@@ -77,7 +77,7 @@ public:
     //定义save name eg: xx.h264
     const char *fileNamePath;
     AVPacket mVideoSrcPkt;
-
+    AVStream* mpVideoSrcStream;
 private:
     //--------------FFmpeg-------------------
     //byte *outBuffer;
@@ -107,7 +107,7 @@ private:
     AVCodec* mpVideoSrcCodec;
     AVCodecContext* mpVideoSrcCodecCxt;
     AVFrame *mpDecodedFrame;
-    AVStream* mpVideoSrcStream;
+
     /*dst视频存储相关变量*/
     AVFormatContext* mpVideoDstFormatCxt;
     AVCodec* mpVideoDstCodec;

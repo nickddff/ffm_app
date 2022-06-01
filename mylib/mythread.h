@@ -19,7 +19,7 @@ typedef struct{
 extern FFmpegProcess *ffmpeg;
 extern int getParaFlag;
 
-extern "C" void tid2_ffm_working(void);
+extern "C" void tid2_ffm_working(int flag);
 extern "C" void tid3_cim_working(void);
 extern "C" int tid1_ffm_init(char *ip,char *filename);
 

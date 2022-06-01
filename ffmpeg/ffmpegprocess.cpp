@@ -1,5 +1,24 @@
 #include "ffmpegprocess.h"
 
+
+// 回调函数的参数，用了时间
+typedef struct {
+	time_t lasttime;
+} Runner;
+
+// 回调函数
+static int interrupt_callback(void *p) {
+	Runner *r = (Runner *)p;
+	if (r->lasttime > 0) {
+		if (time(NULL) - r->lasttime > 8) {
+			// 等待超过8s则中断
+			return 1;
+		}
+	}
+    
+	return 0;
+}
+
 FFmpegProcess::FFmpegProcess()
 {
 
@@ -24,21 +43,27 @@ int FFmpegProcess::FFmpeg_RTSPVideoInit(const char* url,int &width_t,int &height
 {
     int ret = -1;
     avformat_network_init();
+    Runner input_runner = {0};
 
     /****open tcp***/
     av_dict_set(&avdic,"rtsp_transport","tcp",0);
     av_dict_set(&avdic,"max_delay","5000000",0);
     mpVideoSrcFormatCxt = avformat_alloc_context();
+    mpVideoSrcFormatCxt->interrupt_callback.callback = interrupt_callback;
+    mpVideoSrcFormatCxt->interrupt_callback.opaque = &input_runner;
+    input_runner.lasttime = time(NULL);
+    //printf("lasttime :%ld\n",input_runner.lasttime);
     const char* rtspUrl = url;
     //打开输入的URL
     ret = avformat_open_input(&mpVideoSrcFormatCxt, rtspUrl, NULL, &avdic);  //open
     //ret = avformat_open_input(&mpVideoSrcFormatCxt, rtspUrl, NULL, NULL);
+
     if (ret != 0)
     {
         fprintf(stderr, "could not open input file! \n");
         return -1;
     }
-    ret = avformat_find_stream_info(mpVideoSrcFormatCxt, NULL);
+    ret = avformat_find_stream_info(mpVideoSrcFormatCxt, NULL); //查找流信息
     if (ret < 0)
     {
         fprintf(stderr, "could not find stream info! \n");
@@ -57,7 +82,6 @@ int FFmpegProcess::FFmpeg_RTSPVideoInit(const char* url,int &width_t,int &height
         fprintf(stderr, "didn't find any video stream! \n");
         return -1;
     }
-
     //打印信息
         fprintf(stderr, "---------------- File Information ---------------\n");
     av_dump_format(mpVideoSrcFormatCxt, 0, rtspUrl, 0);
@@ -65,7 +89,7 @@ int FFmpegProcess::FFmpeg_RTSPVideoInit(const char* url,int &width_t,int &height
     //申请AVCodecContext空间。需要传递一个编码器，也可以不传，但不会包含编码器。
     mpVideoSrcCodecCxt = avcodec_alloc_context3(NULL);
     //该函数用于将流里面的参数，也就是AVStream里面的参数直接复制到AVCodecContext的上下文当中
-    avcodec_parameters_to_context(mpVideoSrcCodecCxt, mpVideoSrcStream->codecpar);
+    avcodec_parameters_to_context(mpVideoSrcCodecCxt, mpVideoSrcStream->codecpar); 
     //复制解码器上下文空间，如果失败则释放
     if (!mpVideoSrcCodecCxt)
     {

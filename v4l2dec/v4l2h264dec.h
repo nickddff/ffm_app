@@ -35,6 +35,8 @@
  * Structures
  */
 
+extern struct timeval tsv0,tsv1;
+
 struct config {
 	char *video_path;
 	char *stream_path;
@@ -180,16 +182,18 @@ int video_engine_stop(int video_fd, struct video_buffer *buffers,
 int video_engine_decode(int video_fd, unsigned int index, 
 			enum codec_type type, uint64_t ts, void *source_data,
 			unsigned int source_size, struct video_buffer *buffers,
-			struct video_setup *setup);
+			struct video_setup *setup,uint64_t timer);
 
 /* V4L2 */
 int V4l2dec_videoplay_init(int width_t,int height_t);
 
-int v4l2dec_handling_perfame(unsigned char *packet,int packet_len);
+int v4l2dec_handling_perfame(unsigned char *packet,int packet_len,uint64_t timer);
 
 int v4l2dec_handling(unsigned char *packet,int packet_len);
 
 int v4l2dec_stop(void);
 
 extern void hexdump(unsigned char *buf, int len);
+
+extern struct timeval get_timeval_diff(struct timeval tv_0, struct timeval tv_1);
 #endif

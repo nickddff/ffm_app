@@ -826,7 +826,8 @@ static int process_frame(struct video_buffer *buffer)
 	//hexdump(unsigned char *buf, int len)
 	
 	/* printf("==================process_frame=================\n"); */
-	gettimeofday(&tv1, NULL);
+	//gettimeofday(&tv1, NULL);
+
 	if(format->v4l2_format == V4L2_PIX_FMT_JZ420B) {
 		if(preview_decoded_frame == 1)
 			tile420_y_uv_to_rgb888(y, uv, pic_w, pic_h, display_w, display_h, fb_w, fb_mapaddr);
@@ -854,24 +855,39 @@ static int process_frame(struct video_buffer *buffer)
 		}
 	}
 
-	gettimeofday(&tv2, NULL);
+	//gettimeofday(&tv2, NULL);
     //printf("----%s, %s, %d: process %ld us\n", __FILE__, __func__, __LINE__, TIME_DIFF_US(tv1, tv2));
 
 	return 0;
 }
 
 
+uint64_t get_timeval_diff_2(struct timeval tv_0, struct timeval tv_1){
+	struct timeval delt_tv;
+	uint64_t res;
+	if(tv_1.tv_usec >= tv_0.tv_usec){
+		delt_tv.tv_usec = tv_1.tv_usec - tv_0.tv_usec;
+		delt_tv.tv_sec = tv_1.tv_sec - tv_0.tv_sec;
+	} else {
+		delt_tv.tv_usec = tv_1.tv_usec + 1000000 - tv_0.tv_usec;
+		delt_tv.tv_sec = tv_1.tv_sec - 1 - tv_0.tv_sec;
+	}
+	res = delt_tv.tv_sec * 1000000 + delt_tv.tv_usec;
+	return res;
+}
+
+
 int video_engine_decode(int video_fd, unsigned int index,
 			enum codec_type type, uint64_t ts, void *source_data,
 			unsigned int source_size, struct video_buffer *buffers,
-			struct video_setup *setup)
+			struct video_setup *setup,uint64_t utime)
 {
     struct timeval tv = { 0, 300000 };
 	fd_set except_fds;
 	bool source_error, destination_error;
 	int rc;
 	int ret;
-	struct timeval tv1, tv2;
+	struct timeval tv1, tv2,del_tsv;
 	//gettimeofday(&tv1, NULL);
 
 	memcpy(buffers[index].source_data, source_data, source_size);
@@ -900,6 +916,7 @@ int video_engine_decode(int video_fd, unsigned int index,
 	int out_index = 0;
 
     rc = select(video_fd + 1,&except_fds,NULL,NULL,&tv);
+
     //rc = select(video_fd + 1,&except_fds,NULL,NULL,NULL);
 	if(-1 == rc)
 	{
@@ -919,7 +936,6 @@ int video_engine_decode(int video_fd, unsigned int index,
 		return rc;
 	}
 
-
 	int cap_index = 0;
 	rc = dequeue_buffer(video_fd, setup->capture_type, &cap_index,
 			    buffers[index].destination_buffers_count,
@@ -927,7 +943,14 @@ int video_engine_decode(int video_fd, unsigned int index,
 	if(rc < 0) {
 		// 不处理出错的情况.
 	} else {
+
+		gettimeofday(&tsv1,NULL);
+		while(get_timeval_diff_2(tsv0,tsv1) < utime)
+		{
+			gettimeofday(&tsv1,NULL);	
+		} 
 		process_frame(&buffers[cap_index]);
+		 
 	}
 
 	return 0;

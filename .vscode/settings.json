@@ -5,6 +5,7 @@
         "stdio.h": "c",
         "unistd.h": "c",
         "wpa_ctrl.h": "c",
-        "signal.h": "c"
+        "signal.h": "c",
+        "v4l2h264dec.h": "c"
     }
 }
